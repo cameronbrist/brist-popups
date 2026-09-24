@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 /**
  * One-time setup: creates the `popup_store` metaobject definition in the
- * Brist Plus store, readable by the Storefront API.
+ * Brist pop-up store, readable by the Storefront API.
  *
  *   npm run popup:setup
  */

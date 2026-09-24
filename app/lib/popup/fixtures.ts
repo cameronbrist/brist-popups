@@ -3,7 +3,7 @@ import {normalizeTheme} from './theme';
 
 /**
  * Local-only sample pop-ups so the storefront runs against mock.shop
- * before the Plus store is linked. Enabled with POPUP_USE_FIXTURES="true".
+ * before the real store is linked. Enabled with POPUP_USE_FIXTURES="true".
  * Switch between them with ?popup=sample-quiet or ?popup=sample-loud.
  */
 const inDays = (d: number) => new Date(Date.now() + d * 86_400_000).toISOString();

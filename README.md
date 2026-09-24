@@ -1,12 +1,31 @@
 # Brist Pop-ups
 
 One Hydrogen storefront that serves every Brist pop-up store. Each pop-up is a
-`popup_store` metaobject in the Brist Shopify Plus admin: its domain, products,
+`popup_store` metaobject in the Brist pop-up store admin: its domain, products,
 drop window, and look. Launching a pop-up means creating an entry and pointing
 a domain, not building a store.
 
-Checkout, orders, and fulfillment run through the one Brist Plus store, so
+Checkout, orders, and fulfillment run through the one Brist pop-up store, so
 ShipHero, Apparel Magic, and Klaviyo work exactly as they do for every other store.
+
+## Shopify plan
+
+This runs on the **Basic** plan, the cheapest plan that includes Hydrogen and
+Oxygen hosting (Starter does not). Nothing in the code requires Plus.
+
+What Basic does not give us, and when to upgrade to Plus (an in-place upgrade,
+no code or data migration):
+
+- **Per-pop-up checkout branding.** On Basic, every pop-up shares one checkout
+  look, set once in Settings → Checkout. Use a neutral or Brist-branded style.
+- **Checkout-level enforcement.** The cart action blocks closed drops and
+  over-limit carts for normal shoppers, but someone calling the public Storefront
+  API directly could skip it. Plus allows a custom cart validation function that
+  enforces rules inside checkout. Until then, the Flow backstop below closes drops
+  at the product level.
+- **Checkout capacity and card rates.** Plus has more flash-sale headroom and
+  lower processing rates. Upgrade when rate savings cover the plan fee, clients
+  want branded checkout, or order-limit abuse becomes a real problem.
 
 ## How a request is handled
 
@@ -44,15 +63,15 @@ npm run typecheck
 `?popup=sample-quiet` (live, pre-order, editorial layout) and
 `?popup=sample-loud` (upcoming, grid layout).
 
-## Connecting the Brist Plus store (one time)
+## Connecting the Brist pop-up store (one time)
 
 1. **Link the storefront**
    ```bash
-   npx shopify hydrogen link     # choose the Brist Plus store, create a storefront
+   npx shopify hydrogen link     # choose the Brist pop-up store, create a storefront
    npx shopify hydrogen env pull
    ```
    Then remove `POPUP_USE_FIXTURES` from `.env`.
-2. **Create an admin app for the scripts.** In the Plus store admin, create a custom
+2. **Create an admin app for the scripts.** In the store admin, create a custom
    app with `write_metaobject_definitions`, `write_metaobjects`, and `read_products`.
    Copy `.env.admin.example` to `.env.admin` and add the token.
 3. **Create the metaobject definition**
@@ -67,7 +86,12 @@ npm run typecheck
      ```
    Every pop-up order now carries a `popup:<handle>` tag. Confirm ShipHero is
    importing Shopify order tags so it can filter, route, or brand packing slips by pop-up.
-5. **Set environment variables** in Hydrogen storefront settings:
+5. **Add the drop-close backstop in Shopify Flow** (recommended on Basic):
+   when a pop-up closes, unpublish its collection's products from the Hydrogen
+   channel, or set their inventory to stop selling, so nothing can be bought
+   after `closes_at` even outside the storefront. Build it on a scheduled trigger
+   and test it on a draft pop-up before relying on it.
+6. **Set environment variables** in Hydrogen storefront settings:
 
 | Variable | Production | Preview |
 | --- | --- | --- |

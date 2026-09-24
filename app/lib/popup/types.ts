@@ -1,6 +1,6 @@
 /**
  * Pop-up store config. One of these per pop-up, stored as a
- * `popup_store` metaobject in the Brist Shopify Plus admin.
+ * `popup_store` metaobject in the Brist pop-up store admin.
  *
  * Framework-agnostic on purpose: nothing in app/lib/popup imports
  * Hydrogen or React Router, so this logic survives a framework change.

@@ -1,6 +1,6 @@
 # Brist Pop-ups: working notes for Claude
 
-Multi-tenant Hydrogen storefront. One Brist Shopify Plus store, many pop-ups, each
+Multi-tenant Hydrogen storefront. One Brist Shopify store (Basic plan), many pop-ups, each
 a `popup_store` metaobject selected by request hostname. Read README.md first.
 
 Rules for changes:
