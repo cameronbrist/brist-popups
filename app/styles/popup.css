@@ -1,0 +1,253 @@
+/*
+ * Pop-up theming layer. Every value comes from CSS custom properties that the
+ * root layout sets per pop-up (see app/lib/popup/theme.ts). Layout variants
+ * are switched with <html data-layout="classic|editorial|grid">.
+ */
+
+body {
+  background: var(--popup-bg);
+  color: var(--popup-fg);
+  font-family: var(--popup-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--popup-font-display);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+button:not(.reset),
+.button {
+  background: var(--popup-accent);
+  color: var(--popup-accent-fg);
+  border: 0;
+  border-radius: var(--popup-radius);
+  padding: 0.85rem 1.5rem;
+  font: 500 1rem/1 var(--popup-font-body);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--popup-accent);
+  outline-offset: 2px;
+}
+
+/* Drop status bar */
+.drop-banner {
+  padding: 0.6rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  background: var(--popup-accent);
+  color: var(--popup-accent-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.drop-banner[data-phase='closed'] {
+  background: var(--popup-border);
+  color: var(--popup-fg);
+}
+
+/* Header and footer */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--popup-border);
+  background: var(--popup-bg);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.popup-brand {
+  font-family: var(--popup-font-display);
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.popup-brand img {
+  max-height: 40px;
+  width: auto;
+}
+
+.popup-cart-button {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.popup-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+  border-top: 1px solid var(--popup-border);
+  color: var(--popup-muted);
+  font-size: 0.875rem;
+}
+
+.popup-footer nav {
+  display: flex;
+  gap: 1.25rem;
+}
+
+/* Hero */
+.popup-hero {
+  padding: clamp(2.5rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem);
+}
+
+.popup-hero-copy {
+  max-width: 40rem;
+}
+
+.popup-hero h1 {
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  margin: 0 0 1rem;
+}
+
+.popup-hero p {
+  font-size: 1.125rem;
+  color: var(--popup-muted);
+  max-width: 34rem;
+  line-height: 1.6;
+}
+
+.popup-hero-media img {
+  width: 100%;
+  height: auto;
+  border-radius: min(var(--popup-radius), 12px);
+}
+
+/* Product grid */
+.popup-products {
+  padding: 0 clamp(1rem, 4vw, 3rem) 4rem;
+}
+
+.popup-product-grid {
+  display: grid;
+  gap: 2rem 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+}
+
+.product-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-decoration: none;
+}
+
+.product-item img {
+  width: 100%;
+  height: auto;
+  background: var(--popup-border);
+  border-radius: min(var(--popup-radius), 8px);
+}
+
+.product-item-title {
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.product-item-price {
+  color: var(--popup-muted);
+}
+
+.popup-empty {
+  color: var(--popup-muted);
+}
+
+/* Product page additions */
+.ship-message {
+  margin-top: 1rem;
+  color: var(--popup-muted);
+  font-size: 0.9375rem;
+}
+
+.product-description {
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+.cart-error {
+  margin-top: 0.75rem;
+  color: #b3261e;
+  font-size: 0.875rem;
+}
+
+/* Layout variant: editorial — hero image beside copy, larger type */
+[data-layout='editorial'] .popup-hero {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 48em) {
+  [data-layout='editorial'] .popup-hero:has(.popup-hero-media) {
+    grid-template-columns: 1.1fr 1fr;
+  }
+  [data-layout='editorial'] .popup-hero-media {
+    order: 2;
+  }
+  [data-layout='editorial'] .popup-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem 2rem;
+  }
+}
+
+/* Layout variant: grid — compact hero, dense product wall */
+[data-layout='grid'] .popup-hero {
+  padding-bottom: 2rem;
+}
+
+[data-layout='grid'] .popup-hero h1 {
+  text-transform: none;
+  letter-spacing: -0.02em;
+}
+
+[data-layout='grid'] .popup-product-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+  gap: 1.5rem 1rem;
+}
+
+.route-error {
+  padding: 4rem clamp(1rem, 4vw, 3rem);
+  max-width: 36rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Page gutters shared by header, main content, and footer */
+.product,
+.cart,
+.policies,
+.policy,
+.page {
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem) 4rem;
+}
+
+.product img {
+  border-radius: min(var(--popup-radius), 8px);
+}
+
+body > main,
+main {
+  margin: 0;
+  flex: 1;
+}

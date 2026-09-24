@@ -1,0 +1,16 @@
+{
+  "colors": {
+    "background": "#efe9df",
+    "foreground": "#2b2622",
+    "accent": "#3d5a73",
+    "accentForeground": "#ffffff",
+    "muted": "#7a7068",
+    "border": "#d8cfc2"
+  },
+  "fonts": {
+    "display": "\"Fraunces\", Georgia, serif",
+    "body": "\"Inter\", system-ui, sans-serif",
+    "href": "https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500&display=swap"
+  },
+  "radius": 999
+}
