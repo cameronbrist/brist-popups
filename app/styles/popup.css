@@ -249,7 +249,7 @@ button.reset {
 .popup-hero {
   display: grid;
   gap: 2.5rem;
-  padding: clamp(2.5rem, 7vw, 6rem) var(--gutter) clamp(2rem, 5vw, 4rem);
+  padding: clamp(1.5rem, 4vw, 3.5rem) var(--gutter) clamp(2rem, 4vw, 3rem);
 }
 
 @media (min-width: 60em) {
