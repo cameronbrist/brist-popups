@@ -40,38 +40,34 @@ export function CartLineItem({
         {image && (
           <Image
             alt={title}
-            aspectRatio="1/1"
+            aspectRatio="4/5"
+            crop="center"
             data={image}
-            height={100}
+            height={120}
             loading="lazy"
-            width={100}
+            width={96}
           />
         )}
 
-        <div>
-          <Link
-            prefetch="intent"
-            to={lineItemUrl}
-            onClick={() => {
-              if (layout === 'aside') {
-                close();
-              }
-            }}
-          >
-            <p>
-              <strong>{product.title}</strong>
+        <div className="cart-line-info">
+          <div className="cart-line-top">
+            <Link
+              prefetch="intent"
+              to={lineItemUrl}
+              className="cart-line-title"
+              onClick={() => {
+                if (layout === 'aside') close();
+              }}
+            >
+              {product.title}
+            </Link>
+            <ProductPrice price={line?.cost?.totalAmount} />
+          </div>
+          {selectedOptions.some((o) => o.value !== 'Default Title') && (
+            <p className="cart-line-options">
+              {selectedOptions.map((o) => o.value).join(', ')}
             </p>
-          </Link>
-          <ProductPrice price={line?.cost?.totalAmount} />
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.name}>
-                <small>
-                  {option.name}: {option.value}
-                </small>
-              </li>
-            ))}
-          </ul>
+          )}
           <CartLineQuantity line={line} />
         </div>
       </div>
@@ -110,29 +106,35 @@ function CartLineQuantity({line}: {line: CartLine}) {
 
   return (
     <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
+      <div className="quantity-stepper is-small">
+        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+          <button
+            className="reset"
+            aria-label="Decrease quantity"
+            disabled={quantity <= 1 || !!isOptimistic}
+            name="decrease-quantity"
+            value={prevQuantity}
+          >
+            <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden>
+              <path d="M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </CartLineUpdateButton>
+        <span aria-label={`Quantity ${quantity}`}>{quantity}</span>
+        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+          <button
+            className="reset"
+            aria-label="Increase quantity"
+            name="increase-quantity"
+            value={nextQuantity}
+            disabled={!!isOptimistic}
+          >
+            <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden>
+              <path d="M2 7h10M7 2v10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </CartLineUpdateButton>
+      </div>
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
@@ -157,7 +159,7 @@ function CartLineRemoveButton({
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
+      <button className="reset cart-line-remove" disabled={disabled} type="submit">
         Remove
       </button>
     </CartForm>

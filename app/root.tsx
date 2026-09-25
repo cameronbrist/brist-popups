@@ -15,7 +15,6 @@ import favicon from '~/assets/favicon.svg';
 import {resolvePopup} from '~/lib/popup.server';
 import {themeToCss} from '~/lib/popup';
 import resetStyles from '~/styles/reset.css?url';
-import appStyles from '~/styles/app.css?url';
 import popupStyles from '~/styles/popup.css?url';
 import {PageLayout} from './components/PageLayout';
 
@@ -139,7 +138,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={resetStyles}></link>
-        <link rel="stylesheet" href={appStyles}></link>
         <link rel="stylesheet" href={popupStyles}></link>
         {fontsHref && (
           <>

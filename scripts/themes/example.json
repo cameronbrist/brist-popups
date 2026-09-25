@@ -1,16 +1,16 @@
 {
   "colors": {
-    "background": "#efe9df",
-    "foreground": "#2b2622",
-    "accent": "#3d5a73",
-    "accentForeground": "#ffffff",
-    "muted": "#7a7068",
-    "border": "#d8cfc2"
+    "background": "#f2f3ef",
+    "foreground": "#1d2226",
+    "accent": "#2f5d50",
+    "accentForeground": "#f2f3ef",
+    "muted": "#697177",
+    "border": "#d9ddd6"
   },
   "fonts": {
-    "display": "\"Fraunces\", Georgia, serif",
-    "body": "\"Inter\", system-ui, sans-serif",
-    "href": "https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500&display=swap"
+    "display": "\"Schibsted Grotesk\", system-ui, sans-serif",
+    "body": "\"Schibsted Grotesk\", system-ui, sans-serif",
+    "href": "https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap"
   },
   "radius": 999
 }

@@ -64,7 +64,9 @@ describe('theme', () => {
     );
   });
   it('rejects non-Google font stylesheets', () => {
-    expect(normalizeTheme({fonts: {href: 'https://evil.example/x.css'}}).fonts.href).toBeNull();
+    const href = normalizeTheme({fonts: {href: 'https://evil.example/x.css'}}).fonts.href;
+    expect(href).not.toContain('evil.example');
+    expect(normalizeTheme({fonts: {display: 'Custom', href: 'https://evil.example/x.css'}}).fonts.href).toBeNull();
   });
   it('clamps radius and emits CSS variables', () => {
     const t = normalizeTheme({radius: 999, colors: {accent: '#ff0000'}});
@@ -106,5 +108,15 @@ describe('parsePopup + matchPopup', () => {
     expect(matchPopup(all, 'unknown.example.com')).toBeNull();
     expect(matchPopup(all, 'unknown.example.com', {defaultHandle: 'sample-quiet'})?.handle).toBe('sample-quiet');
     expect(normalizeHost('LOCALHOST:3000')).toBe('localhost');
+  });
+});
+
+describe('domains field formats', () => {
+  it('accepts comma-separated plain text', () => {
+    const p = parsePopup({
+      handle: 'x',
+      fields: [{key: 'domains', value: 'shop.example.com, www.Drops.example.com'}],
+    });
+    expect(p.domains).toEqual(['shop.example.com', 'drops.example.com']);
   });
 });

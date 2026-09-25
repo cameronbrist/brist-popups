@@ -60,12 +60,14 @@ export function Aside({
       role="dialog"
       aria-labelledby={id}
     >
-      <button className="close-outside" onClick={close} />
+      <button className="close-outside reset" onClick={close} aria-label="Close cart" tabIndex={-1} />
       <aside>
         <header>
           <h3 id={id}>{heading}</h3>
           <button className="close reset" onClick={close} aria-label="Close">
-            &times;
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
+              <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
           </button>
         </header>
         <main>{children}</main>

@@ -9,7 +9,7 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
+import {ProductGallery} from '~/components/ProductGallery';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {belongsToPopup, requirePopup} from '~/lib/popup.server';
@@ -105,16 +105,24 @@ export default function Product() {
   const {title, descriptionHtml} = product;
   const {popup} = usePopup();
 
+  // Lead with the selected variant's image, then the rest without duplicates.
+  const variantImage = selectedVariant?.image;
+  const images = [
+    ...(variantImage ? [variantImage] : []),
+    ...product.images.nodes.filter((img) => img.url !== variantImage?.url),
+  ];
+
   return (
     <div className="product">
-      <ProductImage image={selectedVariant?.image} />
+      <ProductGallery images={images} title={title} />
       <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
+        <div className="product-header">
+          <h1>{title}</h1>
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+        </div>
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
@@ -122,10 +130,15 @@ export default function Product() {
         {popup.mode === 'preorder' && popup.shipMessage && (
           <p className="ship-message">{popup.shipMessage}</p>
         )}
-        <div
-          className="product-description"
-          dangerouslySetInnerHTML={{__html: descriptionHtml}}
-        />
+        {descriptionHtml && (
+          <details className="product-details" open>
+            <summary>Details</summary>
+            <div
+              className="product-description"
+              dangerouslySetInnerHTML={{__html: descriptionHtml}}
+            />
+          </details>
+        )}
       </div>
       <Analytics.ProductView
         data={{
@@ -185,6 +198,15 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
 
 const PRODUCT_FRAGMENT = `#graphql
   fragment Product on Product {
+    images(first: 12) {
+      nodes {
+        id
+        url
+        altText
+        width
+        height
+      }
+    }
     collections(first: 50) {
       nodes {
         handle

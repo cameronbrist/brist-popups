@@ -38,21 +38,24 @@ export function DropBanner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target]);
 
-  // Render the countdown only after hydration to avoid server/client time mismatch.
+  // Countdown renders only after hydration to avoid server/client time mismatch.
   const remaining = target !== null && now !== null ? formatRemaining(target - now) : null;
 
-  let message: string;
+  let lead: string;
+  let time: string | null = remaining;
   if (drop.phase === 'upcoming') {
-    message = remaining ? `Opens in ${remaining}` : 'Opening soon';
+    lead = remaining ? 'Opens in' : 'Opening soon';
   } else if (drop.phase === 'live') {
-    message = remaining ? `Open now. Closes in ${remaining}` : 'Open now';
+    lead = remaining ? 'Open now. Closes in' : 'Open now';
   } else {
-    message = 'This drop is closed';
+    lead = 'This drop is closed';
+    time = null;
   }
 
   return (
     <div className="drop-banner" data-phase={drop.phase} role="status">
-      {message}
+      {lead}
+      {time && <span className="drop-banner-time">&nbsp;{time}</span>}
     </div>
   );
 }

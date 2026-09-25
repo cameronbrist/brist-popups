@@ -49,7 +49,11 @@ function CartButton({count}: {count: number}) {
         publish('cart_viewed', {cart, prevCart, shop, url: window.location.href || ''} as CartViewPayload);
       }}
     >
-      Cart <span aria-label={`${count} items`}>{count}</span>
+      <span>Cart</span>
+      <span className="popup-cart-count" data-empty={count === 0 ? '' : undefined}>
+        {count}
+      </span>
+      <span className="sr-only">{count === 1 ? 'item' : 'items'}</span>
     </a>
   );
 }

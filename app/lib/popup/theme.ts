@@ -2,19 +2,19 @@ import type {PopupTheme} from './types';
 
 export const DEFAULT_THEME: PopupTheme = {
   colors: {
-    background: '#ffffff',
-    foreground: '#1a1a1a',
-    accent: '#1a1a1a',
-    accentForeground: '#ffffff',
-    muted: '#6b6b6b',
-    border: '#e4e4e4',
+    background: '#f2f3ef',
+    foreground: '#1d2226',
+    accent: '#2f5d50',
+    accentForeground: '#f2f3ef',
+    muted: '#697177',
+    border: '#d9ddd6',
   },
   fonts: {
-    display: 'system-ui, sans-serif',
-    body: 'system-ui, sans-serif',
-    href: null,
+    display: '"Schibsted Grotesk", system-ui, sans-serif',
+    body: '"Schibsted Grotesk", system-ui, sans-serif',
+    href: 'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap',
   },
-  radius: 4,
+  radius: 999,
 };
 
 const COLOR_RE = /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\)|hsla?\([\d\s.,%deg]+\))$/i;
@@ -50,11 +50,14 @@ export function normalizeTheme(raw: unknown): PopupTheme {
       muted: color(c.muted, d.colors.muted),
       border: color(c.border, d.colors.border),
     },
-    fonts: {
-      display: font(f.display, d.fonts.display),
-      body: font(f.body, d.fonts.body),
-      href: typeof f.href === 'string' && FONT_HREF_RE.test(f.href) ? f.href : null,
-    },
+    fonts: (() => {
+      const display = font(f.display, d.fonts.display);
+      const body = font(f.body, d.fonts.body);
+      const validHref = typeof f.href === 'string' && FONT_HREF_RE.test(f.href) ? f.href : null;
+      // Keep loading the default web font when the default families are in use.
+      const usesDefaults = display === d.fonts.display && body === d.fonts.body;
+      return {display, body, href: validHref ?? (usesDefaults ? d.fonts.href ?? null : null)};
+    })(),
     radius: Number.isFinite(radius) ? Math.min(40, Math.max(0, radius)) : d.radius,
   };
 }

@@ -2,6 +2,7 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
+import {DropTimeline} from '~/components/popup/DropTimeline';
 import {requirePopup} from '~/lib/popup.server';
 import {usePopup} from '~/lib/usePopup';
 
@@ -41,21 +42,23 @@ export default function PopupHome() {
   return (
     <div className="popup-home">
       <section className="popup-hero">
-        {popup.heroImage && (
-          <div className="popup-hero-media">
-            <Image
-              data={popup.heroImage}
-              alt={popup.heroImage.altText || ''}
-              sizes="100vw"
-              loading="eager"
-            />
-          </div>
-        )}
         <div className="popup-hero-copy">
           <h1>{popup.headline ?? popup.name}</h1>
-          {popup.intro && <p>{popup.intro}</p>}
+          {popup.intro && <p className="popup-hero-intro">{popup.intro}</p>}
         </div>
+        <DropTimeline />
       </section>
+
+      {popup.heroImage && (
+        <div className="popup-hero-media">
+          <Image
+            data={popup.heroImage}
+            alt={popup.heroImage.altText || ''}
+            sizes="100vw"
+            loading="eager"
+          />
+        </div>
+      )}
 
       <section className="popup-products" aria-label="Products in this drop">
         {products.length ? (
@@ -70,8 +73,8 @@ export default function PopupHome() {
           </div>
         ) : (
           <p className="popup-empty">
-            Products for this drop haven&apos;t been added yet. Add them to the
-            pop-up&apos;s collection in Shopify admin.
+            Add products to this pop-up&apos;s collection in Shopify admin and
+            they&apos;ll appear here.
           </p>
         )}
       </section>
@@ -84,18 +87,21 @@ const POPUP_PRODUCT_FRAGMENT = `#graphql
     id
     title
     handle
+    availableForSale
     priceRange {
       minVariantPrice {
         amount
         currencyCode
       }
     }
-    featuredImage {
-      id
-      url
-      altText
-      width
-      height
+    images(first: 2) {
+      nodes {
+        id
+        url
+        altText
+        width
+        height
+      }
     }
   }
 ` as const;

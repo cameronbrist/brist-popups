@@ -45,10 +45,13 @@ export function parsePopup(node: MetaobjectNode): PopupConfig {
   const val = (k: string) => f.get(k)?.value ?? null;
   const ref = (k: string) => f.get(k)?.reference ?? null;
 
+  // Accepts a list field (JSON array) or a plain single-line field with
+  // comma-separated hostnames, since both are easy to create in the admin.
   const domainsRaw = json(val('domains'));
-  const domains = Array.isArray(domainsRaw)
-    ? domainsRaw.filter((d): d is string => typeof d === 'string').map(normalizeHost)
-    : [];
+  const domainList = Array.isArray(domainsRaw)
+    ? domainsRaw.filter((d): d is string => typeof d === 'string')
+    : (val('domains') ?? '').split(',');
+  const domains = domainList.map(normalizeHost).filter(Boolean);
 
   const max = Number(val('max_per_order'));
 
