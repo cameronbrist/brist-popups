@@ -2,6 +2,7 @@ import {Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 import type {PopupProductFragment} from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
+import {usePopup} from '~/lib/usePopup';
 
 export function ProductItem({
   product,
@@ -11,6 +12,7 @@ export function ProductItem({
   loading?: 'eager' | 'lazy';
 }) {
   const variantUrl = useVariantUrl(product.handle);
+  const {copy} = usePopup();
   const [primary, secondary] = product.images.nodes;
   const sizes = '(min-width: 64em) 30vw, (min-width: 40em) 45vw, 50vw';
 
@@ -39,11 +41,13 @@ export function ProductItem({
             sizes={sizes}
           />
         )}
-        {!product.availableForSale && <span className="product-item-flag">Sold out</span>}
+        {!product.availableForSale && <span className="product-item-flag">{copy.soldOut}</span>}
       </div>
       <div className="product-item-meta">
         <span className="product-item-title">{product.title}</span>
-        <Money className="product-item-price" data={product.priceRange.minVariantPrice} />
+        {copy.showPrices && (
+          <Money className="product-item-price" data={product.priceRange.minVariantPrice} />
+        )}
       </div>
     </Link>
   );

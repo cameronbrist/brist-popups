@@ -41,7 +41,7 @@ no code or data migration):
 
 | Path | What it is |
 | --- | --- |
-| `app/lib/popup/` | Portable core: types, drop-state rules, theme validation, metaobject parsing. No Hydrogen imports. Keep it that way. |
+| `app/lib/popup/` | Portable core: types, drop-state rules, mode wording (`copy.ts`), theme validation, metaobject parsing. No Hydrogen imports. Keep it that way. |
 | `app/lib/popup.server.ts` | Hydrogen wiring: fetches configs, resolves the pop-up per request, scoping helpers. |
 | `app/components/popup/` | Header, footer, drop countdown banner. |
 | `app/routes/_index.tsx` | Pop-up landing page: hero plus the pop-up's collection. |
@@ -120,6 +120,34 @@ npm run typecheck
    and point DNS at it.
 6. Set status to `active`. The banner counts down and the store opens itself at `opens_at`.
 7. After the drop: set status to `archived`. The domain stops serving.
+
+## Corporate gift pop-ups
+
+Set a pop-up's **Mode** to `gift` for company gifting: recipients pick a gift
+and size, enter their address, and check out with no payment. Brist invoices
+the company outside Shopify.
+
+What gift mode changes on the storefront: prices are hidden everywhere, the
+button reads "Choose this gift", one gift per order (raise with Max per order),
+no quantity stepper, gift wording in the cart, and search engines are told not
+to index the pop-up.
+
+Setup per gift program:
+
+1. **Price the gift products at $0.** Checkout then skips payment, and no price
+   appears in checkout or emails. The real price lives in Brist's quote.
+2. **Cap inventory at headcount** with "Continue selling when out of stock" off,
+   so Shopify stops claims at the number the company paid for. For a kit sold
+   as one product with size variants, spread the cap across sizes or keep the
+   total as the hard stop.
+3. **Make $0 orders ship free.** In Settings → Shipping, add a rate priced $0
+   with an order-price condition of $0 to $0, and give paid rates a $0.01
+   minimum so gift orders only see the free rate.
+4. **Kits:** make the kit one product with a Size option, and set up the kit
+   SKU in ShipHero as a kit so the warehouse picks the components.
+5. **Share the pop-up link** with recipients. For the claim report, filter
+   orders by the `popup:<handle>` tag and export, then match emails to the
+   company's list.
 
 ## Guardrails built in
 

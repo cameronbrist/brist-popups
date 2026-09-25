@@ -38,6 +38,7 @@ function CartCount() {
 
 function CartButton({count}: {count: number}) {
   const {open} = useAside();
+  const {copy} = usePopup();
   const {publish, shop, cart, prevCart} = useAnalytics();
   return (
     <a
@@ -49,7 +50,7 @@ function CartButton({count}: {count: number}) {
         publish('cart_viewed', {cart, prevCart, shop, url: window.location.href || ''} as CartViewPayload);
       }}
     >
-      <span>Cart</span>
+      <span>{copy.cartButton}</span>
       <span className="popup-cart-count" data-empty={count === 0 ? '' : undefined}>
         {count}
       </span>

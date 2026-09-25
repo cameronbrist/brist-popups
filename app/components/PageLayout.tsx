@@ -6,6 +6,7 @@ import {CartMain} from '~/components/CartMain';
 import {PopupHeader} from '~/components/popup/PopupHeader';
 import {PopupFooter} from '~/components/popup/PopupFooter';
 import {DropBanner} from '~/components/popup/DropBanner';
+import {usePopup} from '~/lib/usePopup';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -25,8 +26,9 @@ export function PageLayout({cart, children = null}: PageLayoutProps) {
 }
 
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
+  const {copy} = usePopup();
   return (
-    <Aside type="cart" heading="Your cart">
+    <Aside type="cart" heading={copy.cartTitle}>
       <Suspense fallback={<p>Loading cart…</p>}>
         <Await resolve={cart}>
           {(cart) => <CartMain cart={cart} layout="aside" />}

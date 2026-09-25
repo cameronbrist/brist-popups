@@ -9,6 +9,7 @@ import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import type {ProductFragment} from 'storefrontapi.generated';
 import {usePopup} from '~/lib/usePopup';
+import {buyLabel, orderLimit} from '~/lib/popup';
 
 export function ProductForm({
   productOptions,
@@ -19,15 +20,12 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
-  const {popup, drop} = usePopup();
+  const {popup, drop, copy} = usePopup();
   const [quantity, setQuantity] = useState(1);
   const available = Boolean(selectedVariant?.availableForSale);
-  const max = popup.maxPerOrder ?? 99;
-
-  let label = 'Sold out';
-  if (drop.phase === 'upcoming') label = 'Opens soon';
-  else if (drop.phase === 'closed') label = 'Drop closed';
-  else if (available) label = popup.mode === 'preorder' ? 'Pre-order' : 'Add to cart';
+  const limit = orderLimit(popup);
+  const max = limit ?? 99;
+  const label = buyLabel(popup, drop, available);
 
   const canBuy = available && drop.canPurchase;
 
@@ -36,7 +34,8 @@ export function ProductForm({
       {productOptions.map((option) => {
         if (option.optionValues.length === 1) return null;
         const current = option.optionValues.find((v) => v.selected)?.name;
-        const isSwatch = option.optionValues.some((v) => v.swatch?.color || v.swatch?.image);
+        // Round swatches only when every value has one; otherwise all render as text chips.
+        const isSwatch = option.optionValues.every((v) => v.swatch?.color || v.swatch?.image?.previewImage?.url);
 
         return (
           <fieldset className="product-option" key={option.name}>
@@ -66,7 +65,7 @@ export function ProductForm({
                       replace
                       to={`/products/${handle}?${variantUriQuery}`}
                     >
-                      <OptionLabel swatch={swatch} name={name} />
+                      <OptionLabel swatch={isSwatch ? swatch : undefined} name={name} />
                     </Link>
                   );
                 }
@@ -83,7 +82,7 @@ export function ProductForm({
                       }
                     }}
                   >
-                    <OptionLabel swatch={swatch} name={name} />
+                    <OptionLabel swatch={isSwatch ? swatch : undefined} name={name} />
                   </button>
                 );
               })}
@@ -92,7 +91,8 @@ export function ProductForm({
         );
       })}
 
-      <div className="product-buy">
+      <div className="product-buy" data-single={copy.showQuantity ? undefined : ''}>
+        {copy.showQuantity && (
         <div className="quantity-stepper" aria-label="Quantity">
           <button
             type="button"
@@ -114,6 +114,7 @@ export function ProductForm({
             <Plus />
           </button>
         </div>
+        )}
         <AddToCartButton
           disabled={!canBuy}
           onClick={() => open('cart')}
@@ -122,8 +123,8 @@ export function ProductForm({
           {label}
         </AddToCartButton>
       </div>
-      {popup.maxPerOrder && canBuy ? (
-        <p className="product-limit">Limit {popup.maxPerOrder} per order</p>
+      {limit && canBuy && copy.showQuantity ? (
+        <p className="product-limit">Limit {limit} per order</p>
       ) : null}
     </div>
   );

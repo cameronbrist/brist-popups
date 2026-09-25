@@ -16,7 +16,7 @@ export interface MetaobjectNode {
 }
 
 const STATUSES: PopupStatus[] = ['draft', 'active', 'archived'];
-const MODES: PopupMode[] = ['preorder', 'in_stock'];
+const MODES: PopupMode[] = ['preorder', 'in_stock', 'gift'];
 const LAYOUTS: PopupLayout[] = ['classic', 'editorial', 'grid'];
 
 function pick<T extends string>(value: string | null | undefined, allowed: T[], fallback: T): T {

@@ -720,6 +720,10 @@ button.product-option-value[data-selected]:not(.reset) {
   align-items: stretch;
 }
 
+.product-buy[data-single] {
+  grid-template-columns: 1fr;
+}
+
 .product-buy form,
 .product-buy form button {
   width: 100%;

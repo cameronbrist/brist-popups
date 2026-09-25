@@ -16,7 +16,7 @@ function remainingLabel(ms: number): string {
  * The one question every pre-order buyer has, so it gets the hero.
  */
 export function DropTimeline() {
-  const {popup, drop} = usePopup();
+  const {popup, drop, copy} = usePopup();
   const {opensAt, closesAt} = popup;
   // Progress depends on the clock, so compute it after hydration.
   const [now, setNow] = useState<number | null>(null);
@@ -62,7 +62,7 @@ export function DropTimeline() {
         <span>{opensAt ? `${drop.phase === 'upcoming' ? 'Opens' : 'Opened'} ${fmt(opensAt)}` : ''}</span>
         <span>{`${drop.phase === 'closed' ? 'Closed' : 'Closes'} ${fmt(closesAt)}`}</span>
       </div>
-      {popup.mode === 'preorder' && popup.shipMessage && (
+      {copy.showShipMessage && (
         <p className="drop-timeline-ships">{popup.shipMessage}</p>
       )}
     </div>

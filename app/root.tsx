@@ -145,6 +145,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
             <link rel="stylesheet" href={fontsHref} />
           </>
         )}
+        {data?.popup.mode === 'gift' && <meta name="robots" content="noindex, nofollow" />}
         {data?.themeCss && (
           <style nonce={nonce} dangerouslySetInnerHTML={{__html: data.themeCss}} />
         )}

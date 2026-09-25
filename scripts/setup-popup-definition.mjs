@@ -28,7 +28,7 @@ const definition = {
     {key: 'opens_at', name: 'Opens at', type: 'date_time'},
     {key: 'closes_at', name: 'Closes at', type: 'date_time'},
     {key: 'mode', name: 'Mode', type: 'single_line_text_field',
-      validations: choices(['preorder', 'in_stock'])},
+      validations: choices(['preorder', 'in_stock', 'gift'])},
     {key: 'ship_message', name: 'Ship message', type: 'single_line_text_field',
       description: 'Shown on product pages in pre-order mode'},
     {key: 'headline', name: 'Headline', type: 'single_line_text_field'},

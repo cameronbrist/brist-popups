@@ -103,7 +103,7 @@ export default function Product() {
   });
 
   const {title, descriptionHtml} = product;
-  const {popup} = usePopup();
+  const {copy} = usePopup();
 
   // Lead with the selected variant's image, then the rest without duplicates.
   const variantImage = selectedVariant?.image;
@@ -118,18 +118,18 @@ export default function Product() {
       <div className="product-main">
         <div className="product-header">
           <h1>{title}</h1>
-          <ProductPrice
-            price={selectedVariant?.price}
-            compareAtPrice={selectedVariant?.compareAtPrice}
-          />
+          {copy.showPrices && (
+            <ProductPrice
+              price={selectedVariant?.price}
+              compareAtPrice={selectedVariant?.compareAtPrice}
+            />
+          )}
         </div>
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        {popup.mode === 'preorder' && popup.shipMessage && (
-          <p className="ship-message">{popup.shipMessage}</p>
-        )}
+        {copy.showShipMessage && <ShipMessage />}
         {descriptionHtml && (
           <details className="product-details" open>
             <summary>Details</summary>
@@ -264,3 +264,8 @@ const PRODUCT_QUERY = `#graphql
   }
   ${PRODUCT_FRAGMENT}
 ` as const;
+
+function ShipMessage() {
+  const {popup} = usePopup();
+  return <p className="ship-message">{popup.shipMessage}</p>;
+}

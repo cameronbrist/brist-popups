@@ -7,7 +7,13 @@
  */
 
 export type PopupStatus = 'draft' | 'active' | 'archived';
-export type PopupMode = 'preorder' | 'in_stock';
+/**
+ * preorder: made after the drop closes; shows the ship message.
+ * in_stock: ships now.
+ * gift: corporate gifting. Products are priced $0 in Shopify, prices are
+ * hidden, one gift per order, and inventory is capped at headcount.
+ */
+export type PopupMode = 'preorder' | 'in_stock' | 'gift';
 export type PopupLayout = 'classic' | 'editorial' | 'grid';
 
 export interface PopupImage {

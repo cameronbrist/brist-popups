@@ -1,8 +1,9 @@
 import {describe, expect, it} from 'vitest';
-import {checkOrderLimit, getDropState, maxCacheSeconds} from './drop-state';
+import {checkOrderLimit, getDropState, maxCacheSeconds, orderLimit} from './drop-state';
 import {matchPopup, normalizeHost, parsePopup} from './parse';
 import {DEFAULT_THEME, normalizeTheme, themeToCss} from './theme';
 import {FIXTURE_POPUPS} from './fixtures';
+import {buyLabel, popupCopy} from './copy';
 
 const now = new Date('2026-10-10T12:00:00Z');
 const base = {status: 'active' as const, opensAt: '2026-10-11T16:00:00Z', closesAt: '2026-10-18T16:00:00Z'};
@@ -118,5 +119,36 @@ describe('domains field formats', () => {
       fields: [{key: 'domains', value: 'shop.example.com, www.Drops.example.com'}],
     });
     expect(p.domains).toEqual(['shop.example.com', 'drops.example.com']);
+  });
+});
+
+describe('gift mode', () => {
+  it('parses gift mode', () => {
+    expect(parsePopup({handle: 'g', fields: [{key: 'mode', value: 'Gift'}]}).mode).toBe('gift');
+  });
+  it('defaults to one gift per order', () => {
+    expect(orderLimit({maxPerOrder: null, mode: 'gift'})).toBe(1);
+    expect(orderLimit({maxPerOrder: 2, mode: 'gift'})).toBe(2);
+    expect(orderLimit({maxPerOrder: null, mode: 'preorder'})).toBeNull();
+  });
+  it('explains the gift limit in plain terms', () => {
+    expect(checkOrderLimit({maxPerOrder: null, mode: 'gift'}, 1, 1)).toMatch(/choose one gift/);
+    expect(checkOrderLimit({maxPerOrder: null, mode: 'gift'}, 0, 1)).toBeNull();
+  });
+  it('hides prices and quantity, keeps the ship message', () => {
+    const c = popupCopy({mode: 'gift', shipMessage: 'Ships Dec 8.'});
+    expect(c.showPrices).toBe(false);
+    expect(c.showQuantity).toBe(false);
+    expect(c.showShipMessage).toBe(true);
+    expect(c.checkoutNote).toContain('No payment needed');
+  });
+  it('labels the buy button by phase', () => {
+    expect(buyLabel({mode: 'gift'}, {phase: 'live'}, true)).toBe('Choose this gift');
+    expect(buyLabel({mode: 'gift'}, {phase: 'live'}, false)).toBe('All claimed');
+    expect(buyLabel({mode: 'gift'}, {phase: 'closed'}, true)).toBe('Gift selection closed');
+    expect(buyLabel({mode: 'preorder'}, {phase: 'live'}, true)).toBe('Pre-order');
+  });
+  it('in-stock drops never show a ship message', () => {
+    expect(popupCopy({mode: 'in_stock', shipMessage: 'x'}).showShipMessage).toBe(false);
   });
 });

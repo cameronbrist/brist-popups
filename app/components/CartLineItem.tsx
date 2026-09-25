@@ -5,6 +5,7 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {usePopup} from '~/lib/usePopup';
 import type {
   CartApiQueryFragment,
   CartLineFragment,
@@ -31,6 +32,7 @@ export function CartLineItem({
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
+  const {copy} = usePopup();
   const lineItemChildren = childrenMap[id];
   const childrenLabelId = `cart-line-children-${id}`;
 
@@ -61,7 +63,7 @@ export function CartLineItem({
             >
               {product.title}
             </Link>
-            <ProductPrice price={line?.cost?.totalAmount} />
+            {copy.showPrices && <ProductPrice price={line?.cost?.totalAmount} />}
           </div>
           {selectedOptions.some((o) => o.value !== 'Default Title') && (
             <p className="cart-line-options">
@@ -99,6 +101,7 @@ export function CartLineItem({
  * hasn't yet responded that it was successfully added to the cart.
  */
 function CartLineQuantity({line}: {line: CartLine}) {
+  const {copy} = usePopup();
   if (!line || typeof line?.quantity === 'undefined') return null;
   const {id: lineId, quantity, isOptimistic} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
@@ -106,6 +109,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
 
   return (
     <div className="cart-line-quantity">
+      {copy.showQuantity ? (
       <div className="quantity-stepper is-small">
         <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
           <button
@@ -135,6 +139,9 @@ function CartLineQuantity({line}: {line: CartLine}) {
           </button>
         </CartLineUpdateButton>
       </div>
+      ) : (
+        <span />
+      )}
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );

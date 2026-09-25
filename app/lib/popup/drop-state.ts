@@ -57,18 +57,31 @@ export function maxCacheSeconds(state: DropState, now: Date = new Date(), ceilin
 }
 
 /**
+ * The per-order item limit that applies to a pop-up. Gift pop-ups default to
+ * one gift per order when no limit is set. Returns null for no limit.
+ */
+export function orderLimit(popup: Pick<PopupConfig, 'maxPerOrder'> & {mode?: PopupConfig['mode']}): number | null {
+  if (popup.maxPerOrder && popup.maxPerOrder > 0) return popup.maxPerOrder;
+  return popup.mode === 'gift' ? 1 : null;
+}
+
+/**
  * Checks a proposed cart quantity against the pop-up's per-order limit.
  * Returns an error message, or null if the quantity is allowed.
  */
 export function checkOrderLimit(
-  popup: Pick<PopupConfig, 'maxPerOrder'>,
+  popup: Pick<PopupConfig, 'maxPerOrder'> & {mode?: PopupConfig['mode']},
   currentQuantity: number,
   addingQuantity: number,
 ): string | null {
-  const max = popup.maxPerOrder;
-  if (!max || max <= 0) return null;
-  if (currentQuantity + addingQuantity > max) {
-    return `This drop has a limit of ${max} item${max === 1 ? '' : 's'} per order.`;
+  const max = orderLimit(popup);
+  if (!max) return null;
+  if (currentQuantity + addingQuantity <= max) return null;
+
+  if (popup.mode === 'gift') {
+    return max === 1
+      ? 'You can choose one gift. Remove the one in your cart to pick a different one.'
+      : `You can choose up to ${max} gifts.`;
   }
-  return null;
+  return `This drop has a limit of ${max} item${max === 1 ? '' : 's'} per order.`;
 }

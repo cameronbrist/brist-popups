@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {usePopup} from '~/lib/usePopup';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -93,11 +94,12 @@ function CartEmpty({
   layout?: CartMainProps['layout'];
 }) {
   const {close} = useAside();
+  const {copy} = usePopup();
   return (
     <div hidden={hidden} className="cart-empty">
-      <p>Your cart is empty.</p>
+      <p>{copy.cartEmpty}</p>
       <Link to="/" onClick={close} prefetch="viewport" className="button">
-        Browse the drop
+        {copy.browse}
       </Link>
     </div>
   );
