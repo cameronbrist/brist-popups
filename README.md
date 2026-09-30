@@ -152,7 +152,9 @@ Setup per gift program:
 ## Guardrails built in
 
 - **Product scoping.** Product pages and cart adds check that the product is in the
-  pop-up's collection, so one pop-up's domain can't sell another's products.
+  pop-up's collection, so one pop-up's domain can't sell another's products. It
+  fails closed: a pop-up with no collection shows a "check back soon" message
+  and sells nothing.
 - **Removed routes** that would expose the whole shared catalog: collections,
   search, blogs, sitemap, and `/cart/<variant>:<qty>` permalinks (which would skip the drop guard).
 - **Server-side drop rules.** Closed drops and over-limit carts are rejected in the

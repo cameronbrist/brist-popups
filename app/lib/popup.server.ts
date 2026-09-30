@@ -7,6 +7,7 @@ import {
   FIXTURE_POPUPS,
   POPUP_STORES_QUERY,
   getDropState,
+  isInPopup,
   matchPopup,
   parsePopup,
   type DropState,
@@ -88,12 +89,15 @@ export async function requirePopup(
 /**
  * All pop-ups share one Shopify store, so a product handle from one pop-up
  * would otherwise load on every pop-up domain. This keeps each pop-up scoped
- * to its own collection. Pop-ups without a collection (fixtures) aren't scoped.
+ * to its own collection, and a pop-up with no collection sells nothing.
+ * Only the local sample pop-ups (POPUP_USE_FIXTURES) skip scoping.
  */
 export function belongsToPopup(
   popup: PopupConfig,
   collectionHandles: string[],
+  env: Pick<Env, 'POPUP_USE_FIXTURES'>,
 ): boolean {
-  if (!popup.collectionHandle) return true;
-  return collectionHandles.includes(popup.collectionHandle);
+  return isInPopup(popup, collectionHandles, {
+    allowUnscoped: env.POPUP_USE_FIXTURES === 'true',
+  });
 }

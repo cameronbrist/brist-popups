@@ -59,7 +59,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   }
 
   const collectionHandles = product.collections.nodes.map((c) => c.handle);
-  if (!belongsToPopup(popup, collectionHandles)) {
+  if (!belongsToPopup(popup, collectionHandles, context.env)) {
     throw new Response(null, {status: 404});
   }
 

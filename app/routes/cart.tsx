@@ -202,16 +202,22 @@ async function variantsBelongToPopup(
   variantIds: string[],
   popup: Awaited<ReturnType<typeof requirePopup>>['popup'],
 ) {
-  if (!popup.collectionHandle) return true;
+  if (!popup.collectionHandle) {
+    return context.env.POPUP_USE_FIXTURES === 'true';
+  }
   const {nodes} = await context.storefront.query(VARIANT_COLLECTIONS_QUERY, {
     variables: {ids: variantIds},
     cache: context.storefront.CacheShort(),
   });
+  // Fail closed: every requested variant must come back and be in the pop-up.
+  // (An empty result would otherwise pass .every() vacuously.)
+  if (!variantIds.length || nodes.length !== variantIds.length) return false;
   return nodes.every((node) => {
     if (!node || !('product' in node)) return false;
     return belongsToPopup(
       popup,
       node.product.collections.nodes.map((c) => c.handle),
+      context.env,
     );
   });
 }

@@ -4,6 +4,7 @@ import {matchPopup, normalizeHost, parsePopup} from './parse';
 import {DEFAULT_THEME, normalizeTheme, themeToCss} from './theme';
 import {FIXTURE_POPUPS} from './fixtures';
 import {buyLabel, popupCopy} from './copy';
+import {isInPopup} from './scope';
 
 const now = new Date('2026-10-10T12:00:00Z');
 const base = {status: 'active' as const, opensAt: '2026-10-11T16:00:00Z', closesAt: '2026-10-18T16:00:00Z'};
@@ -150,5 +151,19 @@ describe('gift mode', () => {
   });
   it('in-stock drops never show a ship message', () => {
     expect(popupCopy({mode: 'in_stock', shipMessage: 'x'}).showShipMessage).toBe(false);
+  });
+});
+
+describe('product scoping', () => {
+  it('a pop-up with no collection has no products', () => {
+    expect(isInPopup({collectionHandle: null}, ['anything'])).toBe(false);
+    expect(isInPopup({collectionHandle: null}, [])).toBe(false);
+  });
+  it('only local samples may skip scoping', () => {
+    expect(isInPopup({collectionHandle: null}, [], {allowUnscoped: true})).toBe(true);
+  });
+  it('matches on the pop-up collection only', () => {
+    expect(isInPopup({collectionHandle: 'kk-drop-2'}, ['kk-drop-2', 'all'])).toBe(true);
+    expect(isInPopup({collectionHandle: 'kk-drop-2'}, ['slow-mornings'])).toBe(false);
   });
 });

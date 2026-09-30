@@ -464,8 +464,23 @@ button.reset {
 }
 
 .popup-empty {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  text-align: center;
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+  border-radius: var(--media-radius);
+  background: var(--surface);
+}
+
+.popup-empty h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.popup-empty p {
+  margin: 0;
+  max-width: 36ch;
   color: var(--popup-muted);
-  padding: 3rem 0;
 }
 
 /* Layout variant: editorial — two big columns, more air */

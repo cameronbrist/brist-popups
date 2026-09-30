@@ -28,7 +28,10 @@ export async function loader({request, context}: Route.LoaderArgs) {
     return {products: collection?.products.nodes ?? []};
   }
 
-  // No collection set (sample fixtures on mock.shop): show recent products.
+  // No collection means no products. Only the local sample pop-ups, which run
+  // against mock.shop, fall back to showing recent products.
+  if (context.env.POPUP_USE_FIXTURES !== 'true') return {products: []};
+
   const {products} = await storefront.query(POPUP_FALLBACK_PRODUCTS_QUERY, {
     cache: storefront.CacheShort(),
   });
@@ -37,7 +40,7 @@ export async function loader({request, context}: Route.LoaderArgs) {
 
 export default function PopupHome() {
   const {products} = useLoaderData<typeof loader>();
-  const {popup} = usePopup();
+  const {popup, copy} = usePopup();
 
   return (
     <div className="popup-home">
@@ -72,10 +75,10 @@ export default function PopupHome() {
             ))}
           </div>
         ) : (
-          <p className="popup-empty">
-            Add products to this pop-up&apos;s collection in Shopify admin and
-            they&apos;ll appear here.
-          </p>
+          <div className="popup-empty">
+            <h2>{copy.emptyTitle}</h2>
+            <p>{copy.emptyBody}</p>
+          </div>
         )}
       </section>
     </div>
