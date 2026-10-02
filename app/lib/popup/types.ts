@@ -61,7 +61,12 @@ export interface PopupConfig {
   heroImage: PopupImage | null;
   layout: PopupLayout;
   theme: PopupTheme;
-  /** 0 or null = no limit. Enforced server-side in the cart action. */
+  /** Total items per order. 0 or null = no limit (gift mode defaults to 1). */
   maxPerOrder: number | null;
+  /**
+   * Items per product per order, across all its variants. 1 = "one of each".
+   * 0 or null = no per-item limit. Enforced server-side in the cart action.
+   */
+  maxPerItem: number | null;
   klaviyoListId: string | null;
 }

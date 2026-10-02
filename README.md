@@ -128,9 +128,19 @@ and size, enter their address, and check out with no payment. Brist invoices
 the company outside Shopify.
 
 What gift mode changes on the storefront: prices are hidden everywhere, the
-button reads "Choose this gift", one gift per order (raise with Max per order),
+button reads "Choose this gift", one gift per order by default,
 no quantity stepper, gift wording in the cart, and search engines are told not
 to index the pop-up.
+
+**Limits** (any mode, set on the pop-up entry):
+- **Max per order:** total items. In gift mode this is how many gifts each
+  person picks; empty means one.
+- **Max per item:** per product, across all sizes. `1` means "one of each".
+  Add this field to the definition in the admin: key `max_per_item`, type Integer.
+
+Product pages explain the limits ("Choose up to 3 gifts, one of each.") and the
+gift drawer shows progress ("2 of 3 gifts chosen"). With several picks per
+person, cap inventory at headcount times picks, spread across the options.
 
 Setup per gift program:
 

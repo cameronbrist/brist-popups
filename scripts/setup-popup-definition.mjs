@@ -41,7 +41,10 @@ const definition = {
       validations: choices(['classic', 'editorial', 'grid'])},
     {key: 'theme', name: 'Theme', type: 'json',
       description: 'Colors, fonts, radius. See scripts/themes/example.json'},
-    {key: 'max_per_order', name: 'Max items per order', type: 'number_integer'},
+    {key: 'max_per_order', name: 'Max per order', type: 'number_integer',
+      description: 'Total items per order. Gift pop-ups default to 1.'},
+    {key: 'max_per_item', name: 'Max per item', type: 'number_integer',
+      description: 'Per product, across sizes. 1 = one of each.'},
     {key: 'klaviyo_list_id', name: 'Klaviyo list ID', type: 'single_line_text_field'},
   ],
 };

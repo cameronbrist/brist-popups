@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest';
-import {checkOrderLimit, getDropState, maxCacheSeconds, orderLimit} from './drop-state';
+import {checkItemLimit, checkOrderLimit, getDropState, maxCacheSeconds, orderLimit} from './drop-state';
 import {matchPopup, normalizeHost, parsePopup} from './parse';
 import {DEFAULT_THEME, normalizeTheme, themeToCss} from './theme';
 import {FIXTURE_POPUPS} from './fixtures';
-import {buyLabel, popupCopy} from './copy';
+import {buyLabel, giftProgress, limitHint, popupCopy} from './copy';
 import {isInPopup} from './scope';
 import {popupOrderAttributes} from './order-attributes';
 
@@ -193,5 +193,48 @@ describe('order attributes for emails', () => {
   it('leaves out empty values', () => {
     const keys = popupOrderAttributes({...popup, logo: null}, 'https://x.brist.store').map((x) => x.key);
     expect(keys).not.toContain('_popup_logo');
+  });
+});
+
+describe('per-item limits', () => {
+  const lines = (...q: Array<[string, number]>) => q.map(([productId, quantity]) => ({productId, quantity}));
+  it('counts sizes of the same product together', () => {
+    expect(checkItemLimit({maxPerItem: 1, mode: 'gift'}, lines(['hoodie', 1], ['hoodie', 1]))).toMatch(/already chosen/);
+    expect(checkItemLimit({maxPerItem: 1, mode: 'gift'}, lines(['hoodie', 1], ['hat', 1]))).toBeNull();
+  });
+  it('explains limits above one', () => {
+    expect(checkItemLimit({maxPerItem: 2, mode: 'gift'}, lines(['hat', 3]))).toMatch(/up to 2 of each/);
+    expect(checkItemLimit({maxPerItem: 2, mode: 'preorder'}, lines(['hat', 3]))).toBe('Limit 2 per item.');
+  });
+  it('no limit when unset', () => {
+    expect(checkItemLimit({maxPerItem: null}, lines(['hat', 50]))).toBeNull();
+  });
+  it('parses max_per_item', () => {
+    expect(parsePopup({handle: 'x', fields: [{key: 'max_per_item', value: '1'}]}).maxPerItem).toBe(1);
+  });
+});
+
+describe('limit hints', () => {
+  it('gift hints', () => {
+    expect(limitHint({mode: 'gift', maxPerOrder: 3, maxPerItem: 1})).toBe('Choose up to 3 gifts, one of each.');
+    expect(limitHint({mode: 'gift', maxPerOrder: 3, maxPerItem: null})).toBe('Choose up to 3 gifts.');
+    expect(limitHint({mode: 'gift', maxPerOrder: null, maxPerItem: null})).toBeNull();
+  });
+  it('drop hints', () => {
+    expect(limitHint({mode: 'preorder', maxPerOrder: 6, maxPerItem: 2})).toBe('Limit 6 per order, 2 per item.');
+    expect(limitHint({mode: 'preorder', maxPerOrder: null, maxPerItem: 1})).toBe('Limit 1 per item.');
+  });
+  it('gift progress', () => {
+    expect(giftProgress({mode: 'gift', maxPerOrder: 3, maxPerItem: 1}, 2)).toEqual({text: '2 of 3 gifts chosen', canChooseMore: true});
+    expect(giftProgress({mode: 'gift', maxPerOrder: 3, maxPerItem: 1}, 3)?.canChooseMore).toBe(false);
+    expect(giftProgress({mode: 'gift', maxPerOrder: 1, maxPerItem: null}, 1)).toBeNull();
+  });
+});
+
+describe('gift wording with several gifts', () => {
+  it('pluralizes the drawer', () => {
+    expect(popupCopy({mode: 'gift', shipMessage: null, maxPerOrder: 3}).cartTitle).toBe('Your gifts');
+    expect(popupCopy({mode: 'gift', shipMessage: null, maxPerOrder: null}).cartTitle).toBe('Your gift');
+    expect(popupCopy({mode: 'preorder', shipMessage: null, maxPerOrder: 3}).cartTitle).toBe('Your cart');
   });
 });

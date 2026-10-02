@@ -1058,6 +1058,20 @@ aside > main {
   margin: 0;
 }
 
+.gift-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.gift-progress a {
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
 .cart-summary-note {
   margin: 0;
   font-size: 0.8125rem;

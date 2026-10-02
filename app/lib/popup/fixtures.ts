@@ -26,6 +26,7 @@ export const FIXTURE_POPUPS: PopupConfig[] = [
     layout: 'editorial',
     theme: DEFAULT_THEME,
     maxPerOrder: 6,
+    maxPerItem: null,
     klaviyoListId: null,
   },
   {
@@ -60,6 +61,7 @@ export const FIXTURE_POPUPS: PopupConfig[] = [
       radius: 0,
     }),
     maxPerOrder: 2,
+    maxPerItem: null,
     klaviyoListId: null,
   },
   {
@@ -73,12 +75,13 @@ export const FIXTURE_POPUPS: PopupConfig[] = [
     mode: 'gift',
     shipMessage: 'Gifts ship the week of December 8.',
     headline: 'Pick your holiday gift.',
-    intro: 'A thank-you from all of us. Choose one item and your size, then tell us where to send it.',
+    intro: 'A thank-you from all of us. Choose three different gifts and your sizes, then tell us where to send them.',
     logo: null,
     heroImage: null,
     layout: 'classic',
     theme: DEFAULT_THEME,
-    maxPerOrder: null,
+    maxPerOrder: 3,
+    maxPerItem: 1,
     klaviyoListId: null,
   },
 ];

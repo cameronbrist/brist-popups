@@ -9,7 +9,7 @@ import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import type {ProductFragment} from 'storefrontapi.generated';
 import {usePopup} from '~/lib/usePopup';
-import {buyLabel, orderLimit} from '~/lib/popup';
+import {buyLabel, limitHint, orderLimit} from '~/lib/popup';
 
 export function ProductForm({
   productOptions,
@@ -24,7 +24,8 @@ export function ProductForm({
   const [quantity, setQuantity] = useState(1);
   const available = Boolean(selectedVariant?.availableForSale);
   const limit = orderLimit(popup);
-  const max = limit ?? 99;
+  const max = Math.min(limit ?? 99, popup.maxPerItem ?? 99);
+  const hint = limitHint(popup);
   const label = buyLabel(popup, drop, available);
 
   const canBuy = available && drop.canPurchase;
@@ -123,9 +124,7 @@ export function ProductForm({
           {label}
         </AddToCartButton>
       </div>
-      {limit && canBuy && copy.showQuantity ? (
-        <p className="product-limit">Limit {limit} per order</p>
-      ) : null}
+      {hint && canBuy ? <p className="product-limit">{hint}</p> : null}
     </div>
   );
 }

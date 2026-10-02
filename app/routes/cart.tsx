@@ -8,7 +8,12 @@ import {
   belongsToPopup,
   requirePopup,
 } from '~/lib/popup.server';
-import {checkOrderLimit, popupOrderAttributes, POPUP_ATTRIBUTE_KEYS} from '~/lib/popup';
+import {
+  checkItemLimit,
+  checkOrderLimit,
+  popupOrderAttributes,
+  POPUP_ATTRIBUTE_KEYS,
+} from '~/lib/popup';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Cart'}];
@@ -80,6 +85,36 @@ export async function action({request, context}: Route.ActionArgs) {
       action === CartForm.ACTIONS.LinesAdd
         ? await cart.addLines(inputs.lines)
         : await cart.updateLines(inputs.lines);
+
+    // Per-item limit ("one of each"). Lines are grouped by product, which is
+    // only known reliably after the change, so check the new cart and undo
+    // the change if it went over.
+    // (Add and update return a slim cart, so read the full one first.)
+    const updated = popup.maxPerItem ? await cart.get() : null;
+    const itemError = updated
+      ? checkItemLimit(
+          popup,
+          (updated.lines?.nodes ?? []).map((l) => ({
+            productId: l.merchandise.product.id,
+            quantity: l.quantity,
+          })),
+        )
+      : null;
+    if (itemError) {
+      const before = new Map((current?.lines?.nodes ?? []).map((l) => [l.id, l.quantity]));
+      const after = updated?.lines?.nodes ?? [];
+      const restore = after
+        .filter((l) => before.has(l.id) && before.get(l.id) !== l.quantity)
+        .map((l) => ({id: l.id, quantity: before.get(l.id) ?? 0}));
+      const added = after.filter((l) => !before.has(l.id)).map((l) => l.id);
+      if (restore.length) await cart.updateLines(restore);
+      if (added.length) await cart.removeLines(added);
+      const reverted = await cart.get();
+      return data(
+        {cart: reverted, errors: [{message: itemError}], warnings: [], analytics: {}},
+        {status: 400},
+      );
+    }
 
     // Tag the cart with its pop-up. These carry through to the order as hidden
     // attributes: Flow turns _popup into an order tag for ShipHero, and the

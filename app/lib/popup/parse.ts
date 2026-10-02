@@ -54,6 +54,7 @@ export function parsePopup(node: MetaobjectNode): PopupConfig {
   const domains = domainList.map(normalizeHost).filter(Boolean);
 
   const max = Number(val('max_per_order'));
+  const maxItem = Number(val('max_per_item'));
 
   return {
     handle: node.handle,
@@ -72,6 +73,7 @@ export function parsePopup(node: MetaobjectNode): PopupConfig {
     layout: pick(val('layout'), LAYOUTS, 'classic'),
     theme: normalizeTheme(json(val('theme'))),
     maxPerOrder: Number.isFinite(max) && max > 0 ? Math.floor(max) : null,
+    maxPerItem: Number.isFinite(maxItem) && maxItem > 0 ? Math.floor(maxItem) : null,
     klaviyoListId: val('klaviyo_list_id'),
   };
 }
