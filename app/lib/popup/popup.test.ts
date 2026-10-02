@@ -5,6 +5,7 @@ import {DEFAULT_THEME, normalizeTheme, themeToCss} from './theme';
 import {FIXTURE_POPUPS} from './fixtures';
 import {buyLabel, popupCopy} from './copy';
 import {isInPopup} from './scope';
+import {popupOrderAttributes} from './order-attributes';
 
 const now = new Date('2026-10-10T12:00:00Z');
 const base = {status: 'active' as const, opensAt: '2026-10-11T16:00:00Z', closesAt: '2026-10-18T16:00:00Z'};
@@ -165,5 +166,32 @@ describe('product scoping', () => {
   it('matches on the pop-up collection only', () => {
     expect(isInPopup({collectionHandle: 'kk-drop-2'}, ['kk-drop-2', 'all'])).toBe(true);
     expect(isInPopup({collectionHandle: 'kk-drop-2'}, ['slow-mornings'])).toBe(false);
+  });
+});
+
+describe('order attributes for emails', () => {
+  const popup = parsePopup({
+    handle: 'kk-drop-2',
+    fields: [
+      {key: 'name', value: 'Kim Komando Drop 2'},
+      {key: 'mode', value: 'preorder'},
+      {key: 'theme', value: '{"colors":{"accent":"#0a84ff"}}'},
+      {key: 'logo', value: 'gid://x', reference: {image: {url: 'https://cdn.shopify.com/kk.png', altText: null, width: 1, height: 1}}},
+    ],
+  });
+  it('stamps handle, name, logo, url, color and mode', () => {
+    const a = Object.fromEntries(popupOrderAttributes(popup, 'https://kimkomando.brist.store').map((x) => [x.key, x.value]));
+    expect(a).toEqual({
+      _popup: 'kk-drop-2',
+      _popup_name: 'Kim Komando Drop 2',
+      _popup_logo: 'https://cdn.shopify.com/kk.png',
+      _popup_url: 'https://kimkomando.brist.store',
+      _popup_color: '#0a84ff',
+      _popup_mode: 'preorder',
+    });
+  });
+  it('leaves out empty values', () => {
+    const keys = popupOrderAttributes({...popup, logo: null}, 'https://x.brist.store').map((x) => x.key);
+    expect(keys).not.toContain('_popup_logo');
   });
 });

@@ -8,7 +8,7 @@ import {
   belongsToPopup,
   requirePopup,
 } from '~/lib/popup.server';
-import {checkOrderLimit} from '~/lib/popup';
+import {checkOrderLimit, popupOrderAttributes, POPUP_ATTRIBUTE_KEYS} from '~/lib/popup';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Cart'}];
@@ -81,16 +81,19 @@ export async function action({request, context}: Route.ActionArgs) {
         ? await cart.addLines(inputs.lines)
         : await cart.updateLines(inputs.lines);
 
-    // Tag the cart with its pop-up. Carries through to the order as a note
-    // attribute; Shopify Flow turns it into an order tag for ShipHero.
+    // Tag the cart with its pop-up. These carry through to the order as hidden
+    // attributes: Flow turns _popup into an order tag for ShipHero, and the
+    // email templates use the name, logo, and store address.
     const tagged = result.cart?.attributes?.some(
+      (a) => a.key === POPUP_ATTRIBUTE_KEYS.name && a.value === popup.name,
+    ) && result.cart?.attributes?.some(
       (a) => a.key === POPUP_CART_ATTRIBUTE && a.value === popup.handle,
     );
     if (result.cart?.id && !tagged) {
-      result = await cart.updateAttributes(
-        [{key: POPUP_CART_ATTRIBUTE, value: popup.handle}],
-        {cartId: result.cart.id},
-      );
+      const storeUrl = new URL(request.url).origin;
+      result = await cart.updateAttributes(popupOrderAttributes(popup, storeUrl), {
+        cartId: result.cart.id,
+      });
     }
   }
 
