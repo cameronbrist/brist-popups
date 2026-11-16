@@ -11,6 +11,7 @@ import {
 import {
   checkItemLimit,
   checkOrderLimit,
+  popupAttributesMatch,
   popupOrderAttributes,
   POPUP_ATTRIBUTE_KEYS,
 } from '~/lib/popup';
@@ -119,16 +120,12 @@ export async function action({request, context}: Route.ActionArgs) {
     // Tag the cart with its pop-up. These carry through to the order as hidden
     // attributes: Flow turns _popup into an order tag for ShipHero, and the
     // email templates use the name, logo, and store address.
-    const tagged = result.cart?.attributes?.some(
-      (a) => a.key === POPUP_ATTRIBUTE_KEYS.name && a.value === popup.name,
-    ) && result.cart?.attributes?.some(
-      (a) => a.key === POPUP_CART_ATTRIBUTE && a.value === popup.handle,
-    );
-    if (result.cart?.id && !tagged) {
-      const storeUrl = new URL(request.url).origin;
-      result = await cart.updateAttributes(popupOrderAttributes(popup, storeUrl), {
-        cartId: result.cart.id,
-      });
+    // Re-stamp whenever any detail differs, so carts pick up edits made in
+    // the admin mid-drop (a new ship message, a new logo).
+    const desired = popupOrderAttributes(popup, new URL(request.url).origin);
+    const latest = updated ?? (await cart.get());
+    if (result.cart?.id && !popupAttributesMatch(latest?.attributes, desired)) {
+      result = await cart.updateAttributes(desired, {cartId: result.cart.id});
     }
   }
 

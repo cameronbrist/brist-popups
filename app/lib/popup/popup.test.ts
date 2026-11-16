@@ -5,7 +5,7 @@ import {DEFAULT_THEME, normalizeTheme, themeToCss} from './theme';
 import {FIXTURE_POPUPS} from './fixtures';
 import {buyLabel, giftProgress, limitHint, popupCopy} from './copy';
 import {isInPopup} from './scope';
-import {popupOrderAttributes} from './order-attributes';
+import {popupAttributesMatch, popupOrderAttributes} from './order-attributes';
 
 const now = new Date('2026-10-10T12:00:00Z');
 const base = {status: 'active' as const, opensAt: '2026-10-11T16:00:00Z', closesAt: '2026-10-18T16:00:00Z'};
@@ -242,5 +242,26 @@ describe('gift wording with several gifts', () => {
     expect(popupCopy({mode: 'gift', shipMessage: null, maxPerOrder: 3}).cartTitle).toBe('Your gifts');
     expect(popupCopy({mode: 'gift', shipMessage: null, maxPerOrder: null}).cartTitle).toBe('Your gift');
     expect(popupCopy({mode: 'preorder', shipMessage: null, maxPerOrder: 3}).cartTitle).toBe('Your cart');
+  });
+});
+
+describe('cart re-stamping', () => {
+  const desired = [
+    {key: '_popup', value: 'alterra'},
+    {key: '_popup_name', value: 'Alterra'},
+    {key: '_popup_ship', value: 'Ships in 5 weeks'},
+  ];
+  it('matches an up-to-date cart', () => {
+    expect(popupAttributesMatch([...desired, {key: 'gift_note', value: 'hi'}], desired)).toBe(true);
+  });
+  it('re-stamps when a detail is missing or changed', () => {
+    expect(popupAttributesMatch(desired.slice(0, 2), desired)).toBe(false);
+    expect(popupAttributesMatch([desired[0], desired[1], {key: '_popup_ship', value: 'old'}], desired)).toBe(false);
+  });
+  it('re-stamps when a detail was removed from the pop-up', () => {
+    expect(popupAttributesMatch([...desired, {key: '_popup_logo', value: 'x'}], desired)).toBe(false);
+  });
+  it('handles an empty cart', () => {
+    expect(popupAttributesMatch(null, desired)).toBe(false);
   });
 });
