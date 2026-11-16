@@ -10,6 +10,7 @@ import type {PopupConfig} from './types';
  * - _popup_url    the pop-up's store address, for "visit the store" links
  * - _popup_color  accent color, for email buttons
  * - _popup_mode   preorder | in_stock | gift, so emails can adjust wording
+ * - _popup_ship   the pop-up's ship message, for pre-order and gift emails
  *
  * Email templates read these directly, so they need no lookups.
  */
@@ -20,10 +21,11 @@ export const POPUP_ATTRIBUTE_KEYS = {
   url: '_popup_url',
   color: '_popup_color',
   mode: '_popup_mode',
+  ship: '_popup_ship',
 } as const;
 
 export function popupOrderAttributes(
-  popup: Pick<PopupConfig, 'handle' | 'name' | 'logo' | 'mode' | 'theme'>,
+  popup: Pick<PopupConfig, 'handle' | 'name' | 'logo' | 'mode' | 'theme' | 'shipMessage'>,
   storeUrl: string,
 ): Array<{key: string; value: string}> {
   const k = POPUP_ATTRIBUTE_KEYS;
@@ -34,6 +36,8 @@ export function popupOrderAttributes(
     {key: k.url, value: storeUrl},
     {key: k.color, value: popup.theme.colors.accent},
     {key: k.mode, value: popup.mode},
+    // In-stock orders ship now, so they never carry a ship message.
+    {key: k.ship, value: popup.mode === 'in_stock' ? '' : popup.shipMessage ?? ''},
   ];
   // Shopify rejects empty attribute values; leave unset ones out.
   return attrs.filter((a) => a.value.trim() !== '');

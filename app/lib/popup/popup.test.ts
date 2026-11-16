@@ -175,6 +175,7 @@ describe('order attributes for emails', () => {
     fields: [
       {key: 'name', value: 'Kim Komando Drop 2'},
       {key: 'mode', value: 'preorder'},
+      {key: 'ship_message', value: 'Ships about 4 weeks after close.'},
       {key: 'theme', value: '{"colors":{"accent":"#0a84ff"}}'},
       {key: 'logo', value: 'gid://x', reference: {image: {url: 'https://cdn.shopify.com/kk.png', altText: null, width: 1, height: 1}}},
     ],
@@ -188,7 +189,12 @@ describe('order attributes for emails', () => {
       _popup_url: 'https://kimkomando.brist.store',
       _popup_color: '#0a84ff',
       _popup_mode: 'preorder',
+      _popup_ship: 'Ships about 4 weeks after close.',
     });
+  });
+  it('in-stock orders carry no ship message', () => {
+    const keys = popupOrderAttributes({...popup, mode: 'in_stock'}, 'https://x.brist.store').map((x) => x.key);
+    expect(keys).not.toContain('_popup_ship');
   });
   it('leaves out empty values', () => {
     const keys = popupOrderAttributes({...popup, logo: null}, 'https://x.brist.store').map((x) => x.key);

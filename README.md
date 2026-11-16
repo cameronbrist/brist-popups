@@ -162,7 +162,8 @@ Setup per gift program:
 ## Per-pop-up emails
 
 Every order carries hidden attributes set by the storefront: `_popup` (handle),
-`_popup_name`, `_popup_logo`, `_popup_url`, `_popup_color` and `_popup_mode`
+`_popup_name`, `_popup_logo`, `_popup_url`, `_popup_color`, `_popup_mode` and
+`_popup_ship`
 (see `app/lib/popup/order-attributes.ts`). Shopify's notification templates read
 them with `attributes['_popup_name']` and so on, so order emails can show the
 pop-up's own name and logo while falling back to the store branding.
