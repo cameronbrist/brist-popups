@@ -3,17 +3,12 @@ import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
-import {
-  POPUP_CART_ATTRIBUTE,
-  belongsToPopup,
-  requirePopup,
-} from '~/lib/popup.server';
+import {belongsToPopup, requirePopup} from '~/lib/popup.server';
 import {
   checkItemLimit,
   checkOrderLimit,
   popupAttributesMatch,
   popupOrderAttributes,
-  POPUP_ATTRIBUTE_KEYS,
 } from '~/lib/popup';
 
 export const meta: Route.MetaFunction = () => {

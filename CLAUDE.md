@@ -11,4 +11,6 @@ Rules for changes:
 - Drop rules are enforced in `app/routes/cart.tsx`. UI state is a convenience, not the guard.
 - Styling uses only `--popup-*` variables in `app/styles/popup.css`; new theme values
   must go through `normalizeTheme()` validation.
-- Run `npm test && npm run typecheck` before committing.
+- Run `npm test && npm run typecheck && npm run build` before committing. Only the build
+  catches server-only imports leaking into client code (an unused import from a
+  `.server` file is enough to fail the deploy).
