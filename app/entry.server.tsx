@@ -18,6 +18,8 @@ export default async function handleRequest(
     // Pop-up themes may load Google Fonts (validated in app/lib/popup/theme.ts).
     styleSrc: ["'self'", 'https://cdn.shopify.com', 'https://fonts.googleapis.com'],
     fontSrc: ["'self'", 'https://cdn.shopify.com', 'https://fonts.gstatic.com'],
+    // data: allows the generated letter favicon (app/lib/popup/favicon.ts).
+    imgSrc: ["'self'", 'https://cdn.shopify.com', 'data:'],
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,

@@ -58,6 +58,8 @@ export interface PopupConfig {
   headline: string | null;
   intro: string | null;
   logo: PopupImage | null;
+  /** Square browser-tab icon. Falls back to a letter icon in the accent color. */
+  favicon: PopupImage | null;
   heroImage: PopupImage | null;
   layout: PopupLayout;
   theme: PopupTheme;

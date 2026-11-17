@@ -69,6 +69,7 @@ export function parsePopup(node: MetaobjectNode): PopupConfig {
     headline: val('headline'),
     intro: val('intro'),
     logo: ref('logo')?.image ?? null,
+    favicon: ref('favicon')?.image ?? null,
     heroImage: ref('hero_image')?.image ?? null,
     layout: pick(val('layout'), LAYOUTS, 'classic'),
     theme: normalizeTheme(json(val('theme'))),

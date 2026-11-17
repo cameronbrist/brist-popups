@@ -5,6 +5,7 @@ import {DEFAULT_THEME, normalizeTheme, themeToCss} from './theme';
 import {FIXTURE_POPUPS} from './fixtures';
 import {buyLabel, giftProgress, limitHint, popupCopy} from './copy';
 import {isInPopup} from './scope';
+import {letterFavicon, popupFavicon} from './favicon';
 import {popupAttributesMatch, popupOrderAttributes} from './order-attributes';
 
 const now = new Date('2026-10-10T12:00:00Z');
@@ -263,5 +264,30 @@ describe('cart re-stamping', () => {
   });
   it('handles an empty cart', () => {
     expect(popupAttributesMatch(null, desired)).toBe(false);
+  });
+});
+
+describe('favicons', () => {
+  const theme = DEFAULT_THEME;
+  it('uses the pop-up favicon, sized by the CDN', () => {
+    const f = popupFavicon({name: 'Alterra', theme, favicon: {url: 'https://cdn.shopify.com/a.png?v=1', altText: null, width: 512, height: 512}});
+    expect(f.type).toBe('image/png');
+    expect(f.href).toContain('width=96');
+    expect(f.href).toContain('v=1');
+  });
+  it('leaves SVG favicons unresized', () => {
+    const f = popupFavicon({name: 'Alterra', theme, favicon: {url: 'https://cdn.shopify.com/a.svg', altText: null, width: null, height: null}});
+    expect(f).toEqual({href: 'https://cdn.shopify.com/a.svg', type: 'image/svg+xml'});
+  });
+  it('falls back to a letter icon in the accent color', () => {
+    const f = popupFavicon({name: 'Alterra Mountain Co', theme, favicon: null});
+    expect(f.type).toBe('image/svg+xml');
+    const svg = decodeURIComponent(f.href.replace('data:image/svg+xml,', ''));
+    expect(svg).toContain('>A</text>');
+    expect(svg).toContain(theme.colors.accent);
+  });
+  it('handles names that start with symbols', () => {
+    const svg = decodeURIComponent(letterFavicon('#1 Drop', '#000', '#fff'));
+    expect(svg).toContain('>1</text>');
   });
 });

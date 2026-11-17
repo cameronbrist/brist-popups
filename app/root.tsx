@@ -11,9 +11,8 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.svg';
 import {resolvePopup} from '~/lib/popup.server';
-import {themeToCss} from '~/lib/popup';
+import {popupFavicon, themeToCss} from '~/lib/popup';
 import resetStyles from '~/styles/reset.css?url';
 import popupStyles from '~/styles/popup.css?url';
 import {PageLayout} from './components/PageLayout';
@@ -62,7 +61,6 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }
 
@@ -131,6 +129,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
   const fontsHref = data?.popup.theme.fonts.href;
+  const icon = data ? popupFavicon(data.popup) : null;
 
   return (
     <html lang="en" data-layout={data?.popup.layout}>
@@ -139,6 +138,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={popupStyles}></link>
+        {icon && <link rel="icon" type={icon.type} href={icon.href} />}
         {fontsHref && (
           <>
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

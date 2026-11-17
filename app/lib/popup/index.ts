@@ -6,4 +6,5 @@ export * from './queries';
 export * from './copy';
 export * from './scope';
 export * from './order-attributes';
+export * from './favicon';
 export {FIXTURE_POPUPS} from './fixtures';

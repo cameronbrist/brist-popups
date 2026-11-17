@@ -159,6 +159,13 @@ Setup per gift program:
    orders by the `popup:<handle>` tag and export, then match emails to the
    company's list.
 
+## Favicons
+
+Each pop-up can have a **Favicon** image (square, at least 96 x 96 px; SVG or PNG).
+Without one, the tab shows a letter icon from the pop-up's name in its accent
+color, so no pop-up ever shows a generic icon. Add the field to the definition in
+the admin: key `favicon`, type File (images).
+
 ## Per-pop-up emails
 
 Every order carries hidden attributes set by the storefront: `_popup` (handle),

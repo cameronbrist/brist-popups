@@ -22,6 +22,7 @@ export const FIXTURE_POPUPS: PopupConfig[] = [
     headline: 'The fall capsule is open for seven days.',
     intro: 'Four pieces, made to order in small runs. When the window closes, it is gone.',
     logo: null,
+    favicon: null,
     heroImage: null,
     layout: 'editorial',
     theme: DEFAULT_THEME,
@@ -42,6 +43,7 @@ export const FIXTURE_POPUPS: PopupConfig[] = [
     headline: 'Drop 02 lands soon.',
     intro: 'Limited quantities. Join the list to get the link first.',
     logo: null,
+    favicon: null,
     heroImage: null,
     layout: 'grid',
     theme: normalizeTheme({
@@ -77,6 +79,7 @@ export const FIXTURE_POPUPS: PopupConfig[] = [
     headline: 'Pick your holiday gift.',
     intro: 'A thank-you from all of us. Choose three different gifts and your sizes, then tell us where to send them.',
     logo: null,
+    favicon: null,
     heroImage: null,
     layout: 'classic',
     theme: DEFAULT_THEME,
